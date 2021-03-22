@@ -1,3 +1,8 @@
+const pricing = [299, 499, 799, 1099, 4000, 4000, 4000, 4000];
+const d = new Date();
+const utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+const nd = new Date(utc + (3600000*+5.5));
+const ist =  nd.toLocaleString();
 const goToHome = () => {
   window.scrollTo({
     top: 0,
@@ -67,3 +72,132 @@ const goToWomenEmpowermentPricing = () => {
     behavior: 'smooth',
   });
 };
+
+const registerUser = () => {
+  // const transactionId = new Date.now();
+  const name = document.getElementById('register_name').value;
+  const email = document.getElementById('register_email').value;
+  const amount = document.getElementById('register_price').value;
+  const mobile = document.getElementById('register_mobile').value;
+  const packageId = document.getElementById('register_course').value;
+
+  var options = {
+    "key": "rzp_test_ed6Yz16mwiCCGP", // Enter the Key ID generated from the Dashboard    
+    "amount": amount*100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise    
+    "currency": "INR",
+    "name": "Fitness Club",
+    "description": "Test Transaction",
+    "handler": function (response) {
+      // alert(response.razorpay_payment_id);
+      // alert(response.razorpay_order_id);
+      // alert(response.razorpay_signature)
+       fetch("https://api.apispreadsheets.com/data/9726/", {
+         method: "POST",
+         body: JSON.stringify({ "data": { "Date": ist, "Name": name, "Email": email, "Amount": amount, "Mobile": mobile, "Package": packageId, "TransactionId": response.razorpay_payment_id } }),
+       }).then(res => {
+         if (res.status === 201) {
+           alert('Package Booked Successfully');
+         }
+         else {
+           // ERROR
+           alert('Something Went Wrong, Please consult admin for any concern');
+         }
+       })
+    },
+    "prefill": {
+      "name": name,
+      "email": email,
+      "contact": mobile
+    },
+    "notes": {
+      "address": "Razorpay Corporate Office"
+    },
+    "theme": {
+      "color": "#53b982"
+    }
+  };
+  var rzp1 = new Razorpay(options); rzp1.on('payment.failed', function (response) {
+    // alert(response.error.code);
+    // alert(response.error.description);
+    // alert(response.error.source);
+    // alert(response.error.step);
+    // alert(response.error.reason);
+    // alert(response.error.metadata.order_id);
+    // alert(response.error.metadata.payment_id);
+  });
+  rzp1.open();
+  return false;
+}
+
+const queryForm = () => {
+  const queryButton = document.getElementById('queryButton');
+  const loadingQuery = document.getElementById('loadingQuery');
+  queryButton.disabled = true;
+  queryButton.classList.remove('bg-green-500');
+  queryButton.classList.add('bg-green-200');
+  loadingQuery.classList.remove('hidden');
+
+  fetch("https://api.apispreadsheets.com/data/9874/", {
+    method: "POST",
+    body: JSON.stringify({ "data": { "Name": document.getElementById('name').value, "Mobile": document.getElementById('mobile').value, "Message": document.getElementById('message').value } }),
+  }).then(res => {
+    if (res.status === 201) {
+      // SUCCESS
+      alert('Your Query is placed Successfully');
+      document.getElementById('name').value = "";
+      document.getElementById('mobile').value = "";
+      document.getElementById('message').value = "";
+    }
+    else {
+      // ERROR
+      alert('Something Went wrong please try again after some time');
+    }
+  }).finally(() => {
+    document.getElementById('queryButton').disabled = false;
+    queryButton.classList.remove('bg-green-200');
+    queryButton.classList.add('bg-green-500');
+    loadingQuery.classList.add('hidden');
+  })
+  return false;
+}
+
+const modal_overlay = document.querySelector('#modal_overlay');
+const modal = document.querySelector('#modal');
+
+function openModal(value) {
+  const modalCl = modal.classList
+  const overlayCl = modal_overlay
+
+  if (value) {
+    overlayCl.classList.remove('hidden')
+    setTimeout(() => {
+      modalCl.remove('opacity-0')
+      modalCl.remove('-translate-y-full')
+      modalCl.remove('scale-150')
+    }, 100);
+  } else {
+    modalCl.add('-translate-y-full')
+    setTimeout(() => {
+      modalCl.add('opacity-0')
+      modalCl.add('scale-150')
+    }, 100);
+    setTimeout(() => overlayCl.classList.add('hidden'), 300);
+  }
+}
+
+const proceedRegistration = (id) => {
+  document.getElementById('register_course').value = id;
+  document.getElementById('register_price').value = pricing[id - 1];
+  document.getElementById('payment').disabled = false;
+  openModal(true);
+}
+
+const selectCourse = (value) => {
+  if (Number(value) === 0 || isNaN(Number(value))) {
+    alert('Please Select a course');
+    document.getElementById('payment').disabled = true;
+  } else {
+    document.getElementById('payment').disabled = false;
+    document.getElementById('register_price').value = pricing[value - 1];
+  }
+}
