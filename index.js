@@ -1,6 +1,6 @@
-const pricing = [299, 499, 799, 1099, 4000, 4000, 4000, 4000];
-const d = new Date();
-const utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+const pricing = [299, 499, 799, 1099, 4000, 4000, 4000, 4000, 5000, 1500];
+const currdate = new Date();
+const utc = currdate.getTime() + (currdate.getTimezoneOffset() * 60000);
 const nd = new Date(utc + (3600000*+5.5));
 const ist =  nd.toLocaleString();
 const goToHome = () => {
