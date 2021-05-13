@@ -82,15 +82,12 @@ const registerUser = () => {
   const packageId = document.getElementById('register_course').value;
 
   var options = {
-    "key": "rzp_test_ed6Yz16mwiCCGP", // Enter the Key ID generated from the Dashboard    
-    "amount": amount*100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise    
+    "key": "rzp_live_VG7ydsteJZrQqm",     
+    "amount": amount*100, 
     "currency": "INR",
     "name": "Fitness Club",
     "description": "Test Transaction",
     "handler": function (response) {
-      // alert(response.razorpay_payment_id);
-      // alert(response.razorpay_order_id);
-      // alert(response.razorpay_signature)
        fetch("https://api.apispreadsheets.com/data/9726/", {
          method: "POST",
          body: JSON.stringify({ "data": { "Date": ist, "Name": name, "Email": email, "Amount": amount, "Mobile": mobile, "Package": packageId, "TransactionId": response.razorpay_payment_id } }),
