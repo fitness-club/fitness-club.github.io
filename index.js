@@ -1,4 +1,4 @@
-const pricing = [2999, 5999, 9999, 12999, 4000, 4000, 4000, 4000, 5000, 1500];
+const pricing = [2999, 5999, 9999, 12999, 4000, 4000, 4000, 4000, 9999, 2999];
 const currdate = new Date();
 const utc = currdate.getTime() + (currdate.getTimezoneOffset() * 60000);
 const nd = new Date(utc + (3600000*+5.5));
